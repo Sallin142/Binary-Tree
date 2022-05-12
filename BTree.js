@@ -1,8 +1,8 @@
-const TreeNode = require("./BTNode");
+
 
 class BSTNode{
     constructor(val){
-        this.val =val;
+        this.val = val;
         this.left = null;
         this.right = null;
         this.parent = null;
@@ -14,70 +14,56 @@ class BSTree {
         this.root = null;
 
     }
-    addToTree(val){
-        let add = val;
-        if(!val instanceof BSTNode){
-            add = new BSTNode(val);
+    addTraversal(key, node){
+        /* If the tree is empty, return a new Node */
+        if (node == null) return new BSTNode(key);
+    
+        /* Otherwise, recur down the tree */
+        if (key < node.val)
+        {
+            var lchild = this.addTraversal(key, node.left);
+            node.left = lchild;
+    
+            // Set parent of root of left subtree
+            lchild.parent = node;
         }
-        addToTreeTrevsal(add, root);
-       
-    }
-    addToTreeTraversal(add, node){
-        if(add.data < node.val){
-            if(node.left === null){
-                node.left = add;
-                add.parent = node;
-            }else{
-                this.addToTreeTraversal(add, node.left);
-            }
-        }else{
-            if(node.right === null){
-                node.right = add;
-                add.parent = node;
-            }else{
-                this.addToTreeTraversal(add, node.right);
-            }
+        else if (key > node.val)
+        {
+            var rchild = this.addTraversal(key, node.right);
+            node.right = rchild;
+    
+            // Set parent of root of right subtree
+            rchild.parent = node;
         }
+ 
+        /* return the (unchanged) Node pointer */
+        return node;
+
     }
-    removeFromTree(val){
-        this.root = this.removeNodeTraversal(root, val);
-    }
-    removeNodeTraversal(node, val){
-        if(!node){
-            return null;
+    addNode(val){
+        //easier to pass a value then a node object
+        if( val instanceof BSTNode){
+            val = val.val;
         }
-        if(node.val < val){
-            node.left = this.removeNodeTraversal(root.left, val);
-            return node;
-        }else if(node.val > val){
-            node.right = this.removeNodeTraversal(root.right, val);
-            return node;
-        }else{
-            if(node.left && node.right){
-                let suc = this.findSuccesor(node.right);
-                node.data = suc.data;
-                node.removeNodeTraversal(node.right, suc.data);
-                return node;
-            }else if(node.left === null && node.right === null){
-                node = null
-                return node;
-            }else if(node.left === null){
-                node.right.parent = node.parent;
-                node = node.right;
-                return node;
-            }else if(node.right === null){  
-                node.left.parent = node.parent;
-                node = node.left;
-                return node;
-            }
+        this.root = this.addTraversal(val, this.root);
+    }
+    
+    printTreeInorder(root){
+        if(root===null){
+            return;
         }
         
-    }
-    findSuccesor(node){
-        if(node.left){
-            return this.findSuccesor(node.left);
-        }else{
-            return node;
-        }
+        
+        this.printTreeInorder(root.left);
+        
+        console.log(root.val);
+
+        this.printTreeInorder(root.right);
+        return;
+       
+        
     }
 }
+
+
+module.exports = BSTree;
